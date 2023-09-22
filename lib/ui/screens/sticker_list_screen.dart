@@ -1,6 +1,7 @@
 import 'package:badges/badges.dart';
 import 'package:flutter/material.dart' hide Badge;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:sun_stickers/states/_states.dart';
 import 'package:sun_stickers/ui/_ui.dart';
 
 import '../../data/_data.dart';
@@ -16,11 +17,8 @@ class StickerList extends StatefulWidget {
 class StickerListState extends State<StickerList> {
   var categories = AppData.categories;
 
-  void onCategoryTap(int selectedIndex) {
-    //Меняем выбранную категорию
-    categories.asMap().forEach((index, category) {
-      category.isSelected = index == selectedIndex;
-    });
+  void onCategoryTap(StickerCategory category) async {
+    await StickerState().onCategoryTap(category);
     setState(() {});
   }
 
@@ -47,7 +45,7 @@ class StickerListState extends State<StickerList> {
                   style: Theme.of(context).textTheme.displaySmall,
                 ),
                 _categories(),
-                StickerListView(stickers: AppData.stickers),
+                StickerListView(stickers: StickerState().stickersByCategory),
                 Padding(
                   padding: const EdgeInsets.only(top: 25, bottom: 5),
                   child: Row(
@@ -68,7 +66,7 @@ class StickerListState extends State<StickerList> {
                   ),
                 ),
                 StickerListView(
-                  stickers: AppData.stickers,
+                  stickers: StickerState().stickers,
                   isReversed: true,
                 ),
               ],
@@ -81,7 +79,9 @@ class StickerListState extends State<StickerList> {
     return AppBar(
       leading: IconButton(
         icon: const FaIcon(FontAwesomeIcons.dice),
-        onPressed: () {},
+        onPressed: () {
+            StickerState().isLight.value = !StickerState().isLight.value;
+          },
       ),
       title: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -123,6 +123,9 @@ class StickerListState extends State<StickerList> {
   }
 
   Widget _categories() {
+
+    final categories = StickerState().categories;
+
     return Padding(
       padding: const EdgeInsets.only(top: 8.0),
       child: SizedBox(
@@ -133,7 +136,7 @@ class StickerListState extends State<StickerList> {
               final category = categories[index];
               return GestureDetector(
                 onTap: () {
-                  onCategoryTap(index);
+                  onCategoryTap(categories[index]);
                 },
                 child: Container(
                   width: 100,

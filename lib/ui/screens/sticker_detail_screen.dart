@@ -1,21 +1,91 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:sun_stickers/states/_states.dart';
 
 import '../../data/_data.dart';
 import '../../ui_kit/_ui_kit.dart';
 import '../widgets/_widgets.dart';
 
 class StickerDetail extends StatefulWidget {
-  const StickerDetail({super.key});
+  const StickerDetail({super.key, required this.sticker});
+  final Sticker sticker;
 
   @override
   State<StickerDetail> createState() => StickerDetailState();
+
 }
 
 class StickerDetailState extends State<StickerDetail> {
-  final sticker = AppData.stickers[0];
 
+  bool isOpenCart = false;
+
+  Future<void> _showDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Sticker added to cart'),
+          content: const SingleChildScrollView(
+            child: ListBody(
+              children: [
+                Text('Do you want open cart?'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text(
+                'No',
+                style:TextStyle(color:AppColor.accent),),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text(
+                'Yes',
+                style:TextStyle(color: AppColor.accent),),
+              onPressed: () {
+                isOpenCart = true;
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+
+  void onIncreaseQuantityTap() async {
+    await StickerState().onIncreaseQuantityTap(sticker);
+    setState(() {});
+  }
+
+  void onDecreaseQuantityTap() async {
+    await StickerState().onDecreaseQuantityTap(sticker);
+    setState(() {});
+  }
+
+  void onAddToCartTap() async {
+    await StickerState().onAddToCartTap(sticker);
+    await _showDialog();
+    if (isOpenCart){
+      isOpenCart = false;
+      final BottomNavigationBar navigationBar = StickerState().tabKey.currentWidget as BottomNavigationBar;
+      navigationBar.onTap?.call(1);
+      Navigator.of(context).pop();
+    }
+  }
+
+  void onAddRemoveFavoriteTap() {
+    StickerState().onAddRemoveFavoriteTap(sticker);
+    setState(() {});
+  }
+
+  Sticker get sticker => widget.sticker;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,7 +115,7 @@ class StickerDetailState extends State<StickerDetail> {
     return FloatingActionButton(
       elevation: 0.0,
       backgroundColor: AppColor.accent,
-      onPressed: () {},
+      onPressed: onAddRemoveFavoriteTap,
       child: sticker.isFavorite ? const Icon(AppIcon.heart) : const Icon(AppIcon.outlinedHeart),
     );
   }
@@ -107,8 +177,8 @@ class StickerDetailState extends State<StickerDetail> {
                                 style: Theme.of(context).textTheme.displayLarge?.copyWith(color: AppColor.accent),
                               ),
                               CounterButton(
-                                onIncrementTap: () {},
-                                onDecrementTap: () {},
+                                onIncrementTap: onIncreaseQuantityTap,
+                                onDecrementTap: onDecreaseQuantityTap,
                                 label: Text(
                                   sticker.quantity.toString(),
                                   style: Theme.of(context).textTheme.displayLarge,
@@ -133,7 +203,7 @@ class StickerDetailState extends State<StickerDetail> {
                             child: Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 30),
                               child: ElevatedButton(
-                                onPressed: () {},
+                                onPressed: onAddToCartTap,
                                 child: const Text("Add to cart"),
                               ),
                             ),

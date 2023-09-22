@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../data/_data.dart';
+import '../../states/sticker_state.dart';
 import '../_ui.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -11,10 +12,10 @@ class HomeScreen extends StatefulWidget {
 }
 
 class HomeScreenState extends State<HomeScreen> {
-  final List<Widget> screens = [const StickerList(), const CartScreen(), const FavoriteScreen(), const ProfileScreen()];
+  final List<Widget> screens = [const StickerList(), CartScreen(key: StickerState().cartKey), FavoriteScreen(key: StickerState().favoriteKey), const ProfileScreen()];
   int currentIndex = 0;
 
-  void onTabTap(int index) {
+  void onTabTap(int index) async {
     if (currentIndex == index) return;
     currentIndex = index;
     setState(() {});
@@ -30,6 +31,7 @@ class HomeScreenState extends State<HomeScreen> {
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
+        key: StickerState().tabKey,
         currentIndex: currentIndex,
         onTap: onTabTap,
         selectedFontSize: 0,

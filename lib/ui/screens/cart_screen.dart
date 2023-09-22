@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:sun_stickers/states/_states.dart';
 
 import '../../data/_data.dart';
 import '../../ui_kit/_ui_kit.dart';
@@ -13,7 +14,32 @@ class CartScreen extends StatefulWidget {
 }
 
 class CartScreenState extends State<CartScreen> {
-  var cartItems = AppData.cartItems;
+  List<Sticker> get cartItems => StickerState().cart;
+  double taxes = 5.0;
+
+  void update(){
+    setState(() {});
+  }
+
+  void onIncreaseQuantityTap(Sticker sticker) async {
+    await StickerState().onIncreaseQuantityTap(sticker);
+    setState(() {});
+  }
+
+  void onDecreaseQuantityTap(Sticker sticker) async {
+    await StickerState().onDecreaseQuantityTap(sticker);
+    setState(() {});
+  }
+
+  void onRemoveFromCartTap(Sticker sticker) async {
+    await StickerState().onRemoveFromCartTap(sticker);
+    setState(() {});
+  }
+
+  void onCheckOutTap() async {
+    await StickerState().onCheckOutTap();
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +50,7 @@ class CartScreenState extends State<CartScreen> {
         isEmpty: cartItems.isEmpty,
         child: _cartListView(),
       ),
-      bottomNavigationBar: _bottomAppBar(),
+        bottomNavigationBar: cartItems.isEmpty? const SizedBox.shrink() : _bottomAppBar(),
     );
   }
 
@@ -47,7 +73,7 @@ class CartScreenState extends State<CartScreen> {
           direction: DismissDirection.endToStart,
           onDismissed: (direction) {
             if (direction == DismissDirection.endToStart) {
-              print('Удаляем');
+              onRemoveFromCartTap(sticker);
             }
           },
           key: UniqueKey(),
@@ -97,12 +123,8 @@ class CartScreenState extends State<CartScreen> {
                 Column(
                   children: [
                     CounterButton(
-                      onIncrementTap: () {
-                        print('Увеличить количество');
-                      },
-                      onDecrementTap: () {
-                        print('Уменьшить количество');
-                      },
+                      onIncrementTap: () => onIncreaseQuantityTap(sticker),
+                      onDecrementTap: () => onDecreaseQuantityTap(sticker),
                       size: const Size(24, 24),
                       padding: 0,
                       label: Text(
@@ -111,7 +133,7 @@ class CartScreenState extends State<CartScreen> {
                       ),
                     ),
                     Text(
-                      "\$10",
+                      "\$${StickerState().stickerPrice(sticker)}",
                       style: AppTextStyle.h2Style.copyWith(color: AppColor.accent),
                     )
                   ],
@@ -153,7 +175,7 @@ class CartScreenState extends State<CartScreen> {
                                 style: Theme.of(context).textTheme.headlineSmall,
                               ),
                               Text(
-                                "\$111",
+                                "\$${StickerState().subtotal.toString()}",
                                 style: Theme.of(context).textTheme.displayMedium,
                               ),
                             ],
@@ -170,7 +192,7 @@ class CartScreenState extends State<CartScreen> {
                                 style: Theme.of(context).textTheme.headlineSmall,
                               ),
                               Text(
-                                "\$${5.00}",
+                                "\$${taxes.toString()}",
                                 style: Theme.of(context).textTheme.displayMedium,
                               ),
                             ],
@@ -190,7 +212,7 @@ class CartScreenState extends State<CartScreen> {
                                 style: Theme.of(context).textTheme.displayMedium,
                               ),
                               Text(
-                                "\$120.0",
+                                "\$${(StickerState().subtotal + taxes).toString()}",
                                 style: AppTextStyle.h2Style.copyWith(
                                   color: AppColor.accent,
                                 ),
@@ -205,7 +227,7 @@ class CartScreenState extends State<CartScreen> {
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 30),
                             child: ElevatedButton(
-                              onPressed: () {},
+                              onPressed: onCheckOutTap,
                               child: const Text("Checkout"),
                             ),
                           ),
