@@ -1,9 +1,7 @@
-import 'package:flutter/cupertino.dart';
-import 'package:sun_stickers/ui/_ui.dart';
+import 'package:flutter/material.dart';
 
-import '../data/app_data.dart';
-import '../data/models/sticker.dart';
-import '../data/models/sticker_category.dart';
+import '../data/_data.dart';
+import '../ui/_ui.dart';
 
 class StickerState {
   StickerState._();
@@ -13,7 +11,6 @@ class StickerState {
   //Ключи
   GlobalKey<CartScreenState> cartKey = GlobalKey();
   GlobalKey<FavoriteScreenState> favoriteKey = GlobalKey();
-  GlobalKey tabKey = GlobalKey();
 
   //Переменные
   List<StickerCategory> categories = AppData.categories;
@@ -21,60 +18,52 @@ class StickerState {
   List<Sticker> stickersByCategory = AppData.stickers;
   List<Sticker> get cart => stickers.where((element) => element.cart).toList();
   List<Sticker> get favorite => stickers.where((element) => element.isFavorite).toList();
-  ValueNotifier<bool> isLight = ValueNotifier(true);
+  ValueNotifier<bool> isLigth = ValueNotifier(true);
 
   //Действия
-  Future<void> onCategoryTap(StickerCategory category) async {
-    categories.map((e) {
-      if (e.type == category.type) {
-        e.isSelected = true;
-      } else {
-        e.isSelected = false;
-      }
-    }).toList();
+  Future<void> onCategoryTap(StickerCategory category) async {}
 
-    if (category.type == StickerType.all) {
-      stickersByCategory = stickers;
-    } else {
-      stickersByCategory = stickers.where((e) => e.type == category.type).toList();
-    }
-  }
-  Future<void> onIncreaseQuantityTap(Sticker sticker) async {
-    sticker.quantity++;
-  }
-  Future<void> onDecreaseQuantityTap(Sticker sticker) async {
-    if (sticker.quantity == 1) return;
-    sticker.quantity--;
-  }
-  Future<void> onAddToCartTap(Sticker sticker) async {
-    sticker.cart = true;
-    cartKey.currentState?.update();
-  }
-  Future<void> onRemoveFromCartTap(Sticker sticker) async {
-    sticker.cart = false;
-    sticker.quantity = 1;
-  }
-  Future<void> onCheckOutTap() async {
-    for (var element in cart) {
-      element.cart = false;
-      element.quantity = 1;
-    }
-  }
-  Future<void> onAddRemoveFavoriteTap(Sticker sticker) async {
-    sticker.isFavorite = !sticker.isFavorite;
-    favoriteKey.currentState?.update();
-  }
+  Future<void> onIncreaseQuantityTap(Sticker sticker) async {}
 
-  //Вспомогательные методы
+  Future<void> onDecreaseQuantityTap(Sticker sticker) async {}
+
+  Future<void> onAddToCartTap(Sticker sticker) async {}
+
+  Future<void> onRemoveFromCartTap(Sticker sticker) async {}
+
+  Future<void> onCheckOutTap() async {}
+
+  Future<void> onAddRemoveFavoriteTap(Sticker sticker) async {}
+
+  void toggleTheme() {}
+
+  //Вспомогательные  методы
   String stickerPrice(Sticker sticker) {
-    return (sticker.quantity * sticker.price).toString();
-  }
-  double get subtotal {
-    double amount = 0.0;
-    for (var element in cart) {
-      amount = amount + element.price * element.quantity;
-    }
-    return amount;
+    return '';
   }
 
+  double get subtotal {
+    return 0.0;
+  }
+
+  //BLoC, Cubit, GetX, MobX, Provider, Riverpod, Redux
+
+  // 15 шагов логики
+  //
+  //
+  // 1. Подсветка выбранной категории
+  // 2. Продукты по категории
+  // 3. Детали: отображение продукта
+  // 4. Детали: количество
+  // 5.  Корзина: управление пустой корзиной
+  // 6.  Детали: добавление в корзину
+  // 7. Корзина: список в корзине
+  // 8. Корзина: стоимость корзины
+  // 9. Корзина: количество
+  // 10. Корзина: удаление
+  // 11. Корзина: чистка корзина на checkout
+  // 12. Любимые: управление пустым экраном
+  // 13. Детали: Добавление/удаление любимые
+  // 14. Любимые: список любимых
+  // 15. Смена темы
 }
