@@ -78,7 +78,7 @@ class StickerListState extends State<StickerList> {
   PreferredSizeWidget _appBar(BuildContext context) {
     return AppBar(
       leading: IconButton(
-        icon: const FaIcon(FontAwesomeIcons.dice),
+        icon: StickerState().isLight.value ? const FaIcon(FontAwesomeIcons.sun) : const FaIcon(FontAwesomeIcons.moon),
         onPressed: () {
             StickerState().isLight.value = !StickerState().isLight.value;
           },
